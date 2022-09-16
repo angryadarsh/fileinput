@@ -1,0 +1,3044 @@
+<?php
+
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+use kartik\select2\Select2;
+use kartik\switchinput\SwitchInput;
+use common\models\EdasCampaign;
+use common\models\User;
+use kartik\time\TimePicker;
+use yii\helpers\ArrayHelper;
+
+/* @var $this yii\web\View */
+/* @var $model common\models\EdasCampaign */
+/* @var $form yii\widgets\ActiveForm */
+
+$urlManager = Yii::$app->urlManager;
+// echo "<pre>";print_r($decro);
+// echo "<pre>"; print_r($model->call_window);
+// echo "<pre>"; print_r($model->campaign_id);exit;
+?>
+
+<script>
+function updateSlider(passObj) {
+        var obj = $(passObj);
+        var value = obj.val();
+        var min = obj.attr('min');
+        var max = obj.attr('max');
+        var range = Math.round(max - min);
+        var percentage = Math.round((value - min) * 100 / range);
+        var nextObj = obj.next();
+    
+        var btn = nextObj.find('span.bar-btn');
+    
+        if (value == min) {
+            nextObj.find('span.bar-btn').css('left', percentage + '%');
+        }
+        else if (value == max) {
+            nextObj.find('span.bar-btn').css('left', 'calc(' + percentage + '% - ' + btn.width() + 'px)');
+        }
+        else {
+            nextObj.find('span.bar-btn').css('left', 'calc(' + percentage + '% - ' + btn.width() / 2 + 'px)');
+        }
+        
+    
+        if (value == 0) {
+            nextObj.find('span.bar-btn > span').text('Default');
+        }
+        else if (value == 1) {
+            nextObj.find('span.bar-btn > span').text('Medium');
+        }
+        else if (value == 2) {
+            nextObj.find('span.bar-btn > span').text('High');
+        }
+    };
+
+
+</script>
+<div class="container-fluid" id="tabsSection">
+    <div class="card card-primary card-outline card-outline-tabs mt-3">
+        <div class="card-header p-0 border-bottom-0">
+            <div class="float-right" style="margin-right: 19px;">
+                <a class="btn btn-primary backCampaignBtn" href="javascript:void(0)">Back</a>
+            </div>
+            <ul class="nav nav-tabs" id="tabs-tab" role="tablist">
+                <li class="nav-item">
+                <a class="nav-link active" id="tabs-general-tab" data-toggle="pill" href="#tabs-general"
+                    role="tab" aria-controls="tabs-general" aria-selected="true">General</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" id="tabs-skill-tab" data-toggle="pill" href="#tabs-skill" role="tab"
+                    aria-controls="tabs-skill" aria-selected="false">Skill</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" id="tabs-queues-tab" data-toggle="pill" href="#tabs-queues" role="tab"
+                    aria-controls="tabs-queues" aria-selected="false">Queues</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" id="tabs-agent-tab" data-toggle="pill" href="#tabs-agent" role="tab"
+                    aria-controls="tabs-agent" aria-selected="false">Agent</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" id="tabs-dialer-tab" data-toggle="pill" href="#tabs-dialer" role="tab"
+                    aria-controls="tabs-dialer" aria-selected="false">Dialer</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" id="tabs-recording-tab" data-toggle="pill" href="#tabs-recording" role="tab"
+                    aria-controls="tabs-recording" aria-selected="false">Recording</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" id="tabs-disposition-tab" data-toggle="pill" href="#tabs-disposition"
+                    role="tab" aria-controls="tabs-disposition" aria-selected="false">Disposition</a>
+                </li>
+                
+                
+            </ul>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <div class="tab-content" id="tabs-tabContent">
+                <!-- General Tab - Start -->
+                <div class="tab-pane fade show active" id="tabs-general" role="tabpanel" aria-labelledby="tabs-general-tab">
+                    <?php $form = ActiveForm::begin(['options' => ['autocomplete' => 'off'], 'enableAjaxValidation' => true, 'validateOnChange' => false, 'id' => 'campaign_form_submit']); ?>
+                
+                    <div id="addCampiagnForm">
+                        <div class="clearfix mb-3 top-heading">
+                            <h4 class="m-0 float-left">Add Campaign</h4>
+                            <!-- <div class="float-right">
+                                <a class="btn btn-primary backCampaignBtn" href="javascript:void(0)">Back</a>
+                            </div> -->
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <div class="row">
+                                <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-client_id">Client Name</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                             <!-- //Html::dropDownList('client_id', null, 'client_id', 'name')  --><span class="camp_id" value="<?= $model->id ?>"></span>
+                                                <?= $form->field($model, 'client_id', ['template' => '{input}{label}{error}{hint}'])->dropdownList($clients, ['prompt' => 'Select...', 'required' => true])->label(false) ?>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-campaign_name">Campaign Name</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <?= $form->field($model, 'campaign_name', ['template' => '{input}{label}{error}{hint}'])->textInput(['placeholder' => 'Campaign Name', 'required' => true])->label(false) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-campaign_type">Campaign Type</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <?= $form->field($model, 'campaign_type', ['template' => '{input}{label}{error}{hint}'])->dropdownList($campaign_types, ['prompt' => 'Select...', 'required' => true, 'disabled' => !$model->isNewRecord])->label(false) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6" id="CampaignSubType">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-campaign_sub_type">Campaign Sub Type</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                            <?= $form->field($model, 'campaign_sub_type', ['template' => '{input}{label}{error}{hint}'])->dropdownList($campaign_modes, ['prompt' => 'Select...', 'disabled' => !$model->isNewRecord])->label(false) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6" id="Preview">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-preview">Preview</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="edascampaign-preview" class="form-control" name="" placeholder="Preview"
+                                                required="" aria-required="true">
+                                                <div class="help-block"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6" id="TimePreview">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-time_preview">Time Preview</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="edascampaign-time_preview" class="form-control" name="" placeholder="Time Preview"
+                                                required="" aria-required="true">
+                                                <div class="help-block"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6" id="call_medium">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-call_medium">Call Medium</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <?= $form->field($model, 'call_medium', ['template' => '{input}{label}{error}{hint}'])->dropdownList($call_mediums, ['prompt' => 'Select...', 'required' => true, 'disabled' => !$model->isNewRecord])->label(false) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-mode">CRM Name</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <select id="edascampaign-crm_name" class="form-control" name="EdasCampaign[mode]"
+                                                required="">
+                                                <option value="">Select...</option>
+                                                <option value="1">CRM 01</option>
+                                                <option value="2">CRM 02</option>
+                                                <option value="3">CRM 03</option>
+                                                <option value="4">CRM 04</option>
+                                                </select>
+                                                <div class="help-block"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="importMusic">Import Music</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="file" class="form-control" style="visibility: visible;">
+                                                <div class="help-block"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-select_audio">Hold Music</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <div class="row">
+                                                    <div class="col-lg-8">
+                                                        <select id="edascampaign-select_audio" class="form-control" name="EdasCampaign[campaign_dni]"
+                                                        required="">
+                                                        <option value="">Select...</option>
+                                                        <option value="Audio 01">Audio 01</option>
+                                                        <option value="Audio 02">Audio 02</option>
+                                                        <option value="Audio 03">Audio 03</option>
+                                                        <option value="Audio 04">Audio 04</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-lg-4 text-right">
+                                                        <button type="button" class="btn btn-warning" data-toggle="modal"
+                                                        data-target="#preview_audio" disabled>
+                                                        listen
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="help-block"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-audioList">Welcome Prompt</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <select id="edascampaign-audioList" class="form-control" name="EdasCampaign[campaign_dni]"
+                                                required="">
+                                                <option value="">Select...</option>
+                                                <option value="audio_01">Audio 01</option>
+                                                <option value="audio_02">Audio 02</option>
+                                                <option value="audio_03">Audio 03</option>
+                                                <option value="audio_04">Audio 04</option>
+                                                </select>
+                                                <div class="help-block"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-cli_number">CLI Number</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="edascampaign-cli_number" class="form-control" name="EdasCampaign[campaign_name]"
+                                                placeholder="CLI Number" required="" aria-required="true">
+                                                <div class="help-block"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6" id="outbound_criteria">
+                                        <div class=" row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label" for="edascampaign-Criteria">Criteria</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <?= $form->field($model, 'outbound_criteria', ['template' => '{input}{label}{error}{hint}'])->dropdownList($criterias, ['prompt' => 'Select...'])->label(false) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6" id="campaign_operators">
+                                        <div class=" row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Campaign Operators</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <?= $form->field($model, 'campaign_operators', ['template' => '{input}{label}{error}{hint}'])->dropdownList($clientsoperator, ['prompt' => 'Select.....'])->label(false) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class=" row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Call Timeout</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <?= $form->field($model, 'call_timeout', ['template' => '{input}{label}{error}{hint}'])->textInput(['placeholder' => 'Call Timeout', 'value' => ($model->call_timeout ? $model->call_timeout : 60)])->label(false) ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Campaign Status </label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <button type="button" class="btn btn-toggle" data-toggle="button"
+                                                aria-pressed="false" id="edascampaign-campaign_status" autocomplete="off">
+                                                <div class="handle"></div>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class=" row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Campaign Run Time </label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <?= $form->field($model, 'call_window', ['template' => '{input}{label}{error}{hint}'])->dropdownList($call_windows, ['prompt' => 'Select...', 'id' => 'selected_call_window'])->label(false) ?>
+                                                <a href="javascript:void(0)" id="viewMore" class="view-more-btn">View</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="col-lg-12 form-group text-center">
+                                        <button type="submit" class="btn btn-primary form_loader " id="key1" value="Submit">Next</button>
+                                        <button type="reset" class="btn btn-secondary" id="reset">Reset</button>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <?php// ActiveForm::end(); ?> -->
+                </div>
+                <!-- General Tab - End -->
+                <!-- Skill Tab - Start -->
+                <div class="tab-pane fade" id="tabs-skill" role="tabpanel" aria-labelledby="tabs-skill-tab">
+                    <div id="skillList">
+                        <div class="clearfix mb-3 top-heading">
+                            <h4 class="m-0 float-left">Skill List</h4>
+                            <div class="float-right">
+                                <!-- <a class="btn btn-primary backCampaignBtn" href="javascript:void(0)">Back</a> -->
+                                 <button type="button" id="addusermodal" class="btn btn-secondary" data-toggle="modal" data-target="#addUserModal">Assign User</button>
+                            </div>
+                        </div>
+                        <form>
+                        <div class="add-skill-form row pt-4 mb-3">
+                            <div class="col-lg-4">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <label class="form-label" for="edascampaign-add_skill">Add Skill</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input type="text" id="edascampaign-add_skill" class="form-control" placeholder="Add Skill" required="true">
+                                        <div class="help-block"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <div class=" row">
+                                    <div class="col-lg-4">
+                                        <label class="form-label" for="edascampaign-sliderUserWeight">Skill Weight</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input id="edascampaign-sliderUserWeight" class="slider slider-blue" value="0" min="0" max="2"
+                                        step="1" name="007" type="range" required="true"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <label class="form-label" for="edascampaign-call_window">Call window</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                    <?= $form->field($queueModel, 'call_window', ['template' => '{input}{label}{error}{hint}'])->dropdownList($call_windows, ['prompt' => 'Select...', 'id' => 'queue_call_window', 'class' => 'form-control queue-call-window' ,'required'=>true])->label(false)?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <label class="form-label" for="edascampaign-call_timeout">Call Timeout</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                            <?= $form->field($model, 'call_timeout', ['template' => '{input}{label}{error}{hint}'])->textInput(['placeholder' => 'Call Timeout', 'id' => 'call_timeout', 'value' => ($model->call_timeout ? $model->call_timeout : 60),'required'=>true])->label(false) ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <label class="form-label" for="edascampaign-dni">DNI</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <?= $form->field($queueModel, 'dni_id', ['template' => '{input}{label}{error}{hint}'])->dropdownList($dnis, ['prompt' => 'Select...', 'id' => 'queue_dni_id','required'=>true])->label(false) ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <label class="form-label" for="edascampaign-criteria">Criteria</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <?= $form->field($queueModel, 'criteria', ['template' => '{input}{label}{error}{hint}'])->dropdownList($criterias, ['prompt' => 'Select...','required'=>true])->label(false) ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 text-center" style="margin-bottom: 15px">
+                                <button type="submit"  id="add_skill" class="btn btn-primary">Add Skill</button>
+                                <!-- <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#addUserModal">Assign User</button> -->
+                            </div>
+                        </div>
+                        </form>
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <table class="table table-striped dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Agent Id</th>
+                                            <th>Agent Name</th>
+                                            <th>Skill Name</th>
+                                            <th>User Weight</th>
+                                            <th>Manager</th>
+                                            <th>Supervisor</th>
+                                            <th style="width: 80px;">&nbsp;</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody  id="displayAssignedUser">
+                                        <!-- <tr data-key="189" class="even">
+                                            
+                                        </tr> -->
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-4">
+                                <canvas id="pieChart"
+                                style="min-height: 550px; height: 550px; max-height: 550px; max-width: 100%;"></canvas>
+                            </div>
+                            <div class="col-lg-12 form-group text-center mb-0">
+                                <button type="submit" class="btn btn-primary form_loader " id="tab_skill" value="Submit">Next</button>
+                                <button type="reset" class="btn btn-secondary" id="reset">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Skill Tab - End -->
+                <!-- Queue Tab - Start -->
+                <div class="tab-pane fade" id="tabs-queues" role="tabpanel" aria-labelledby="tabs-queues-tab">
+                    <div class="queues_list" id="queuesList">
+                        <div class="clearfix mb-3 top-heading">
+                            <!-- <h4 class="m-0 float-left">Queues List</h4> -->
+                            <div class="float-left">
+                                <div class="row">
+                                    <div class="col-lg-5">
+                                        <label class="form-label" for="edascampaign-campaign_name">Queues Type</label>
+                                    </div>
+                                    <div class="col-lg-7">
+                                        <select id="edascampaign-mode" class="form-control" name="EdasCampaign[mode]"
+                                        required="">
+                                        <option value="">Select...</option>
+                                        <option value="1">Longest Idle</option>
+                                        <option value="2">Fixed</option>
+                                        <option value="3">Robin round</option>
+                                        <option value="4">Skill Based</option>
+                                        </select>
+                                        <div class="help-block"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="float-right">
+                                <a class="btn btn-primary backCampaignBtn" href="javascript:void(0)">Back</a>
+                            </div> -->
+                        </div>
+                        <div class="d-flex">
+                            <div class="col-lg-45-percent">
+                                <h4 class="title text-center">Unassigned Agent List</h4>
+                                <div class="mb-3">
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                        <label class="form-label" for="edascampaign-call_medium">Search By column</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                        <select class="form-control" id="selectColumnType">
+                                            <option>Select Column Type</option>
+                                            <option value="Agent ID">Agent ID</option>
+                                            <option value="Agent Name">Agent Name</option>
+                                            <option value="Skill Weight">Skill Weight</option>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Supervisor">Supervisor</option>
+                                        </select>
+                                        </div>
+                                        <div class="col-lg-4">
+                                        <input type="search" name="" id="seachByColumnInput" placeholder="Search" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table id="unassignedAgentTable" class="table table-striped dataTable" width="100%" cellspacing="0" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 53.2px;">Agent Id</th>
+                                            <th style="width: 77.2px;">Agent Name</th>
+                                            <th style="width: 76.2px;">Skill Weight</th>
+                                            <th style="width: 56.2px;">Manager</th>
+                                            <th style="width: 70.2px;">Supervisor</th>
+                                            <th style="width: 40.2px;">Assign</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="unassignedd">
+<!--                                         
+                                    <td >Agent Id</td>
+                                            <td>Agent Name</td>
+                                            <td>Skill Weight</td>
+                                            <td>Manager</td>
+                                            <td>Supervisor</td>
+                                            <td></td> -->
+                                       
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-lg-9-percent top-to-bottom-border">
+                                <div class="fetch-left-and-right">
+                                <button id="fetchLeftToRightAll" type="button" class="btn btn-primary mb-2"><i class="fas fa-angle-double-right"></i></button>
+                                <button id="fetchRightToLeftAll" type="button" class="btn btn-primary mb-2" disabled><i class="fas fa-angle-double-left"></i></button>
+                                <button id="fetchLeftToRight" type="button" class="btn btn-primary mb-2" disabled><i class="fas fa-angle-right"></i></button>
+                                <button id="fetchRightToLeft" type="button" class="btn btn-primary" disabled><i class="fas fa-angle-left"></i></button>
+                                </div>
+                            </div>
+                            <div class="col-lg-45-percent">
+                                <h4 class="title text-center">Assigned Agent List</h4>
+                                <div class="mb-3">
+                                    <div class="row">
+                                        <div class="col-lg-3">
+                                            <label class="form-label" for="edascampaign-call_medium">Search By column</label>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <select class="form-control" id="selectColumnType">
+                                                <option>Select Column Type</option>
+                                                <option value="Agent ID">Agent ID</option>
+                                                <option value="Agent Name">Agent Name</option>
+                                                <option value="Skill Weight">Skill Weight</option>
+                                                <option value="Manager">Manager</option>
+                                                <option value="Supervisor">Supervisor</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <input type="search" name="" id="seachByColumnInput" placeholder="Search" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                                <table id="assignedAgentTable" class="table table-striped myTable2 dataTable" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 59.2px;">Agent Id</th>
+                                            <th style="width: 95.2px;">Agent Name</th>
+                                            <th style="width: 90.2px;">Skill Weight</th>
+                                            <th style="width: 56.2px">Manager</th>
+                                            <th style="width: 70.2px;">Supervisor</th>
+                                            <th style="width: 90px;">&nbsp;</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr id="noData">
+                                            <td colspan="6" class="text-center">No Data</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 form-group text-center mt-15 mb-0">
+                            <button type="submit" id="add_queues" class="btn btn-primary form_loader">Next</button>
+                            <button type="reset" class="btn btn-secondary" id="clickevent">Reset</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Queue Tab - End -->
+                <!-- Agent Tab - Start -->
+                <div class="tab-pane fade" id="tabs-agent" role="tabpanel" aria-labelledby="tabs-agent-tab">
+                    <div id="addAgentForm">
+                    <div class="clearfix mb-3 top-heading">
+                        <h4 class="m-0 float-left">Add Agent</h4>
+                        <!-- <div class="float-right">
+                            <a class="btn btn-primary backCampaignBtn" href="javascript:void(0)"> Back</a>
+                        </div> -->
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10">
+                            <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                <div class="col-lg-4">
+                                    <label class="form-label" for="edascampaign-manual_call">Manual Call </label>
+                                </div>
+                                <div class="col-lg-8">
+                                    <button type="button" id="edascampaign-manual_call" class="btn btn-toggle" data-toggle="button" aria-pressed="false" autocomplete="off">
+                                    <div class="handle"></div>
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                <div class="col-lg-4">
+                                    <label class="form-label">Call Hangup </label>
+                                </div>
+                                <div class="col-lg-8">
+                                    <button type="button" id="edascampaign-call_hangup" class="btn btn-toggle active" data-toggle="button"
+                                    aria-pressed="true" autocomplete="off">
+                                    <div class="handle"></div>
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                <div class="col-lg-4">
+                                    <label class="form-label">Conference </label>
+                                </div>
+                                <div class="col-lg-8">
+                                    <button type="button" id="edascampaign-conference" class="btn btn-toggle" data-toggle="button"
+                                    aria-pressed="false" autocomplete="off">
+                                    <div class="handle"></div>
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                <div class="col-lg-4">
+                                    <label class="form-label">Blind Transfer </label>
+                                </div>
+                                <div class="col-lg-8">
+                                    <button type="button" id="edascampaign-blind_transfer" class="btn btn-toggle" data-toggle="button"
+                                    aria-pressed="false" autocomplete="off">
+                                    <div class="handle"></div>
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                <div class="col-lg-4">
+                                    <label class="form-label">Consultation </label>
+                                </div>
+                                <div class="col-lg-8">
+                                    <button type="button" id="edascampaign-consultation"  class="btn btn-toggle" data-toggle="button"
+                                    aria-pressed="false" autocomplete="off">
+                                    <div class="handle"></div>
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                <div class="col-lg-4">
+                                    <label class="form-label">Warm Transfer to Inb </label>
+                                </div>
+                                <div class="col-lg-8">
+                                    <select id="edascampaign-warm_transfer_to_inb" class="form-control"
+                                    name="EdasCampaign[warm_transfer_to_inb]" required="">
+                                    <option value="">Select...</option>
+                                    <option value="1">Campaign </option>
+                                    <option value="2">Agent</option>
+                                    <option value="3">Supervisor </option>
+                                    </select>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                <div class="col-lg-4">
+                                    <label class="form-label">Require Disposition </label>
+                                </div>
+                                <div class="col-lg-8">
+                                    <select id="edascampaign-require_disposition" class="form-control"
+                                    name="EdasCampaign[require_disposition]" required="">
+                                    <option value="">Select...</option>
+                                    <option value="1" selected>Required </option>
+                                    <option value="2">Optional </option>
+                                    <option value="3">Not Required </option>
+                                    </select>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                <div class="col-lg-4">
+                                    <label class="form-label">Disposition </label>
+                                </div>
+                                <div class="col-lg-8">
+                                    <?= $form->field($model, 'disposition_plan_id', ['template' => '{input}{label}{error}{hint}'])->dropdownList($disposition_plans, ['prompt' => 'Select...', 'class' => 'disposition_plan form-control'])->label(false) ?>
+                                </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="form-group row">
+                                <div class="col-lg-4">
+                                    <label class="form-label">Enable Next Call Button </label>
+                                </div>
+                                <div class="col-lg-8">
+                                    <button type="button" id="edascampaign-call_button" class="btn btn-toggle active" data-toggle="button"
+                                    aria-pressed="true" autocomplete="off">
+                                    <div class="handle"></div>
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                        <div class="col-lg-12 form-group text-center mb-0">
+                            <button type="submit" id="add_agents" class="btn btn-primary form_loader">Next</button>
+                            <button type="reset" class="btn btn-secondary">Reset</button>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+<!-- DISPOSITION MODAL -->
+    <div id="dispo_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <p class="">Set Dispositions Configurations</p>
+                    <button type="button" class="close modal_close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="dispo_details">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                <!-- Agent Tab - End -->
+                <!-- Dialer Tab - Start -->
+                <div class="tab-pane fade" id="tabs-dialer" role="tabpanel" aria-labelledby="tabs-dialer-tab">
+                    <div id="adddialerForm">
+                        <div class="clearfix mb-3 top-heading">
+                            <h4 class="m-0 float-left">Add Dialer</h4>
+                            <!-- <div class="float-right">
+                                <a class="btn btn-primary backCampaignBtn" href="javascript:void(0)">Back</a>
+                            </div> -->
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <div class="row">
+                                    <div class="col-lg-6" id="inbound_campaign">
+                                        <div class="col-lg-12">
+                                            <h5 class="mb-4  title text-center">For Inbound campaign</h5>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Campaign SL Time</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="edascampaign-campaign_sl_time" class="form-control" placeholder="Campaign SL Time" required="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Campaign SL Percent</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="edascampaign-campaign_sl_percent" class="form-control" placeholder="Campaign SL Percent"
+                                                required="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Call Answer Delay </label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="edascampaign-call_answer_delay" class="form-control" placeholder="Call Answer Delay" required="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6" id="outbound_campaign">
+                                        <div class="col-lg-12">
+                                            <h5 class="mb-4 title text-center">For outbound campaign</h5>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Dial Mode</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <select id="edascampaign-dial_mode" class="form-control"
+                                                name="EdasCampaign[dial_mode]" required="">
+                                                <option value="">Select...</option>
+                                                <option value="1" selected>Automatic </option>
+                                                <option value="2">Blaster </option>
+                                                <option value="3">Predictive </option>
+                                                <option value="4">Preview </option>
+                                                <option value="5">Timed Preview </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Preview Autodial </label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="edascampaign-preview_autodial" class="form-control seconds-input" placeholder="Preview Autodial" required="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row pacing_ratio">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Pacing ratio </label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="edascampaign-pacing_ratio" class="form-control" placeholder="Pacing ratio" required="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row basket_count">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Basket Count</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="edascampaign-basket_count" class="form-control" placeholder="Basket Count" required="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row abandoned_percent">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Abandoned Percent</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="edascampaign-abandoned_percent" class="form-control" placeholder="Abandoned Percent" required="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Max callback days </label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input type="text" id="edascampaign-max_callback_days" class="form-control" placeholder="Max callback days" required="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-12 form-group text-center mb-0">
+                                    <button type="submit" id="add_dailer" class="btn btn-primary form_loader">Next</button>
+                                    <button type="reset" class="btn btn-secondary">Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Dialer Tab - End -->
+                <!-- Recording Manager Tab - Start -->
+                <div class="tab-pane fade" id="tabs-recording" role="tabpanel" aria-labelledby="tabs-recording-tab">
+                    <div id="searchRecordingForm">
+                        <div class="clearfix mb-3 top-heading">
+                            <h4 class="m-0 float-left">Recording Manager</h4>
+                            <!-- <div class="float-right">
+                                <a class="btn btn-primary backCampaignBtn" href="javascript:void(0)"> Back</a>
+                            </div> -->
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Direction</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <select class="form-control" name="Direction" id="edascampaign-direction" required="">
+                                                <option value="">Select Direction</option>
+                                                <option value="All">All</option>
+                                                <option value="Inbound">Inbound</option>
+                                                <option value="Outbound">Outbound</option>
+                                            </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Campaign/Queue </label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <select id="edascampaign-campaign_queue" class="form-control"
+                                                name="EdasCampaign[call_medium]" required="">
+                                                <option value="">Select...</option>
+                                                <option value="1">DemoCamp</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Start Date</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input value="2022-06-22" id="edascampaign-start_date" class="form-control" type="date" required="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">End Date</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input value="2022-06-22" id="edascampaign-end_date" class="form-control" type="date" required="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Agent ID </label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <select name="Agent" id="edascampaign-agent_id" class="form-control">
+                                                <option value="All">All </option>
+                                                <option value="105080"> 105080 - Shyam Maurya </option>
+                                                <option value="111836"> 111836 - Jestin Joshi </option>
+                                                <option value="6748"> 6748 - Wilson Nadar </option>
+                                                <option value="100377"> 100377 - Vibin Vincent </option>
+                                                <option value="67488"> 67488 - Wilson Nadar </option>
+                                                <option value="150003"> 150003 - POC DM 3 </option>
+                                                <option value="150010"> 150010 - POC DM SU 2 </option>
+                                                <option value="150013"> 150013 - POC DM </option>
+                                                <option value="150025"> 150025 - DEMO Email </option>
+                                                <option value="150026"> 150026 - 150026 </option>
+                                                <option value="150027"> 150027 - Demo Email 2 </option>
+                                                <option value="Ed001"> Ed001 - Kalpana C </option>
+                                                <option value="3013"> 3013 - Vaibhav </option>
+                                                <option value="120001"> 120001 - Test Agent </option>
+                                                <option value="User1"> User1 - User1 </option>
+                                                <option value="3013user"> 3013user - vaibhav user </option>
+                                                <option value="30133013"> 30133013 - vaibhav 3013 </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <div class="col-lg-4">
+                                                <label class="form-label">Phone Number</label>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <input class="form-control" id="edascampaign-phone_number" type="text" required="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 form-group text-center mb-0">
+                                        <button type="submit" id="recordingSubmitBtn" class="btn btn-primary form_loader ">Next</button>
+                                        <button type="reset" class="btn btn-secondary">Reset</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="recordingList" style="display: none;">
+                        <div class="clearfix mb-3 top-heading">
+                            <h4 class="m-0 float-left">Recording Manager</h4>
+                            <div class="float-right">
+                                <a class="btn btn-primary" id="backToSearchRecording" href="javascript:void(0)"> Back</a>
+                                <button type="submit" id="recordingtab" class="btn btn-primary form_loader">Next</button>
+                            </div>
+                        </div>
+                        <table class="table table-striped recordingManagerTable">
+                            <thead>
+                                <tr>
+                                <th>Recording Id</th>
+                                <th>Start Time</th>
+                                <th>Sec</th>
+                                <th>Lead Id</th>
+                                <th>User Id</th>
+                                <th>Number</th>
+                                <th>Disposition</th>
+                                <th>Campaign Id</th>
+                                <th>Evaluation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>11441</td>
+                                <td>2022-06-02 10:52:06</td>
+                                <td>11</td>
+                                <td>387637</td>
+                                <td>150025 - DEMO Email</td>
+                                <td>9820289831</td>
+                                <td>Call not Disposed or Transfer</td>
+                                <td>DEMOCAMP</td>
+                                <td><a href="#" class="view-recording" data-toggle="modal" data-target="#recordingModal">Evaluate</a></td>
+                                </tr>
+                                <tr>
+                                <td>11441</td>
+                                <td>2022-06-02 10:52:06</td>
+                                <td>11</td>
+                                <td>387637</td>
+                                <td>150025 - DEMO Email</td>
+                                <td>9820289831</td>
+                                <td>Call not Disposed or Transfer</td>
+                                <td>DEMOCAMP</td>
+                                <td><a href="#" class="view-recording" data-toggle="modal" data-target="#recordingModal">Evaluate</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Recording Manager Tab - End -->
+                <!-- Disposition List Tab - Start -->
+                <div class="tab-pane fade" id="tabs-disposition" role="tabpanel"
+                    aria-labelledby="tabs-disposition-tab">
+                    <div id="dispositionList">
+                        <div class="clearfix mb-3 top-heading">
+                            <h4 class="m-0 float-left">Disposition List</h4>
+                            <div class="float-right selectBox">
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <label class="form-label mt-1">Dial Mode</label>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <select id="edascampaign-call_medium" class="form-control"
+                                        name="EdasCampaign[call_medium]" required="">
+                                        <option value="">Select...</option>
+                                        <option value="1" selected="">Disposition 01 </option>
+                                        <option value="2">Disposition 02 </option>
+                                        <option value="3">Disposition 03 </option>
+                                        <option value="4">Disposition 04 </option>
+                                        <option value="5">Disposition 05 </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <table id="dispositionTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Disposition</th>
+                                    <th>Code</th>
+                                    <th>Type</th>
+                                    <th>Result</th>
+                                    <th>Retry Count</th>
+                                    <th>Retry Delay</th>
+                                    <th style="width: 60px;">&nbsp;</th>
+                                </tr>
+                                </thead>
+                                <tbody id="displosotion_data">
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-lg-12 form-group text-center mb-0 pt-3">
+                        <button type="submit" id="recordingSubmitBtn" class="btn btn-primary form_loader finalsubmit">submit</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </div>
+                <!-- dispostion update modal  -->
+<div id="dispo_update_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+                <div class="modal-header text-center">
+                    <p class="">Set Dispositions Configurations</p>
+                    <button type="button" class="close modal_close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="dispo_update_details">
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+                <!-- Disposition List Tab - End -->
+                
+
+                    <div id="recordingList" style="display: none;">
+                        <div class="clearfix mb-3 top-heading">
+                            <h4 class="m-0 float-left">Recording Manager</h4>
+                            <div class="float-right">
+                                <a class="btn btn-primary" id="backToSearchRecording" href="javascript:void(0)"> Back</a>
+                            </div>
+                        </div>
+                        <table class="table table-striped recordingManagerTable">
+                            <thead>
+                                <tr>
+                                <th>Recording Id</th>
+                                <th>Start Time</th>
+                                <th>Sec</th>
+                                <th>Lead Id</th>
+                                <th>User Id</th>
+                                <th>Number</th>
+                                <th>Disposition</th>
+                                <th>Campaign Id</th>
+                                <th>Evaluation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                <td>11441</td>
+                                <td>2022-06-02 10:52:06</td>
+                                <td>11</td>
+                                <td>387637</td>
+                                <td>150025 - DEMO Email</td>
+                                <td>9820289831</td>
+                                <td>Call not Disposed or Transfer</td>
+                                <td>DEMOCAMP</td>
+                                <td><a href="#" class="view-recording" data-toggle="modal" data-target="#recordingModal">Evaluate</a></td>
+                                </tr>
+                                <tr>
+                                <td>11441</td>
+                                <td>2022-06-02 10:52:06</td>
+                                <td>11</td>
+                                <td>387637</td>
+                                <td>150025 - DEMO Email</td>
+                                <td>9820289831</td>
+                                <td>Call not Disposed or Transfer</td>
+                                <td>DEMOCAMP</td>
+                                <td><a href="#" class="view-recording" data-toggle="modal" data-target="#recordingModal">Evaluate</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                
+                <!-- Lead Upload Tab - End -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- New UI for Tabs and it's related contents - End - Krunal -->
+<!-- To view "Campaign Run Time" right side popup - Start - Krunal -->
+<div class="offcanvas offcanvas-end" id="offcanvasRight">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel">Campaign Run Time </h5>
+      <a class="close" href="javascript:void(0)" id="closeOffCanvasBtn"><i class="fas fa-times"></i></a>
+    </div>
+    <div class="offcanvas-body">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Days</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                </tr>
+            </thead>
+            <tbody id="callruntimes">
+                
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- To view "Campaign Run Time" right side popup - End - Krunal -->
+
+<!-- Hold Music Audio - Start - Krunal -->
+<div class="modal fade" id="preview_audio" tabindex="-1" aria-labelledby="preview_audioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="preview_audioLabel">Listen Hold Music</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="player">
+                    <!-- Progress Bar -->
+                    <div id="track">
+                        <div id="progress"></div>
+                    </div>
+                    <!-- Controls -->
+                    <div id="controls">
+                        <div class="icon" id="play"></div>
+                        <div class="icon" id="pause"></div>
+                        <div class="icon" id="stop"></div>
+                        <div class="icon" id="mute"></div>
+                        <div id="volume">
+                            <div id="level"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div> -->
+        </div>
+    </div>
+</div>
+<!-- Hold Music Audio - End - Krunal -->
+
+<div id="queueMusicModal" class="modal fade" role="dialog">
+</div>
+
+<!-- Recording Modal - Start - Krunal -->
+<div class="modal fade" id="recordingModal" tabindex="-1" aria-labelledby="recordingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- <h5 class="modal-title" id="addUserModalLabel">Assign User</h5> -->
+                <audio controls>
+                    <source src="horse.ogg" type="audio/ogg">
+                </audio>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="tabs-tab" role="tablist">
+                    <li class="nav-item">
+                    <a class="nav-link active" id="tabs-quality-feedback-tab" data-toggle="pill" href="#tabs-quality-feedback"
+                        role="tab" aria-controls="tabs-quality-feedback" aria-selected="true">Quality Feedback</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" id="tabs-opening-tab" data-toggle="pill" href="#tabs-opening" role="tab"
+                        aria-controls="tabs-opening" aria-selected="false">Opening</a>
+                    </li>
+                </ul>
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tabs-quality-feedback" role="tabpanel" aria-labelledby="tabs-quality-feedback-tab">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Agent Name</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                                <option>Select Agent Name</option>
+                                                <option>Agent 01</option>
+                                                <option>Agent 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Campaign</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                                <option>Select Campaign</option>
+                                                <option>Campaign 01</option>
+                                                <option>Campaign 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Language</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                                <option>Select Language</option>
+                                                <option>Language 01</option>
+                                                <option>Language 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Audit Type</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                                <option>Select Audit Type</option>
+                                                <option>Audit Type 01</option>
+                                                <option>Audit Type 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Location</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                                <option>Select Location</option>
+                                                <option>Location 01</option>
+                                                <option>Location 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Call Duration</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="text" class="form-control" placeholder="00:11">
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Call Date</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="date" class="form-control" placeholder="00:11">
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Week</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                            <option>Select Week</option>
+                                            <option>Week 01</option>
+                                            <option>Week 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Month</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                            <option>Select Month</option>
+                                            <option>Month 01</option>
+                                            <option>Month 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Call Id</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Analysis Finding</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                            <option>Select Analysis Finding</option>
+                                            <option>Analysis Finding 01</option>
+                                            <option>Analysis Finding 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Agent Type</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                            <option>Select Agent Type</option>
+                                            <option>Agent Type 01</option>
+                                            <option>Agent Type 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Unique Id</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="text" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">PIP Status</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                            <option>Select PIP Status</option>
+                                            <option>PIP Status 01</option>
+                                            <option>PIP Status 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Disposition</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                            <option>Select Disposition</option>
+                                            <option>Disposition 01</option>
+                                            <option>Disposition 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Sub Disposition</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                            <option>Select Sub Disposition</option>
+                                            <option>Sub Disposition 01</option>
+                                            <option>Sub Disposition 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Categorization</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                            <option>Select Categorization</option>
+                                            <option>Categorization 01</option>
+                                            <option>Categorization 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-4">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Action Status</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <select class="form-control">
+                                            <option>Select Action Status</option>
+                                            <option>Action Status 01</option>
+                                            <option>Action Status 02</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-12">
+                                    <div class="form-group row">
+                                        <div class="col-lg-2">
+                                            <label class="form-label">Gist of Case</label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <textarea class="form-control" name="" id="" cols="30" rows="2" placeholder="Gist of Case"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-12">
+                                    <div class="form-group row">
+                                        <div class="col-lg-2">
+                                            <label class="form-label">Analysis Finding</label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <textarea class="form-control" name="" id="" cols="30" rows="2" placeholder="Analysis Finding"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-12">
+                                    <div class="form-group row">
+                                        <div class="col-lg-2">
+                                            <label class="form-label">Area Of Improvement</label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <textarea class="form-control" name="" id="" cols="30" rows="2" placeholder="Area Of Improvement"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-12">
+                                    <div class="form-group row">
+                                        <div class="col-lg-2">
+                                            <label class="form-label">Reason For Error Call</label>
+                                        </div>
+                                        <div class="col-lg-10">
+                                            <textarea class="form-control" name="" id="" cols="30" rows="2" placeholder="Reason For Error Call"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Quality Scrore</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="text" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Out of</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="text" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Final Score</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="text" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Percentage (%)</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="text" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tabs-opening" role="tabpanel" aria-labelledby="tabs-opening-tab">
+                            <table id="" class="table table-striped table-bordered nowrap">
+                                <thead>
+                                    <tr>
+                                        <th>Parameter</th>
+                                        <th>Sub-Parameter</th>
+                                        <th>Marking</th>
+                                        <th>Remark</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Opening <input type="hidden" name="parameter[]" value="Opening">
+                                        </td>
+                                        <td>Standard Opening<input type="hidden" name="subparameter[]" value="Standard Opening">
+                                        </td>
+                                        <td>
+                                            <select name="Rating[]" class="form-control required_field marking Non_Fatal" id="Rating_0_Opening"
+                                            required="" placeholder="Marking">
+                                            <option value="">--Select--</option>
+                                            <option value="0">0</option>
+                                            <option value="3">3</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="remark[]" class="form-control" value="">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Opening <input type="hidden" name="parameter[]" value="Opening"></td>
+                                        <td>Purpose of the call<input type="hidden" name="subparameter[]" value="Purpose of the call"></td>
+                                        <td>
+                                            <select name="Rating[]" class="form-control required_field marking Non_Fatal" id="Rating_1_Opening" required="" placeholder="Marking">
+                                            <option value="">--Select--</option>
+                                            <option value="0"> 0</option>
+                                            <option value="3"> 3</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="remark[]" class="form-control" value="">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="row mt-4">
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Quality Scrore</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="text" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Out of</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="text" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Final Score</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="text" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                    
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <div class="col-lg-4">
+                                            <label class="form-label">Percentage (%)</label>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <input type="text" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Recording Modal - End - Krunal -->
+
+<!-- Assign User Modal - Start - Krunal -->
+ <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Assign User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group row">
+                            <div class="col-lg-4">
+                                <label class="form-label">Select Skill</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <select class="form-control" id="options" required>
+                                    <!-- <option>Select Skill</option>
+                                    <option>English</option>
+                                    <option>Hindi</option>
+                                    <option>Marathi</option>
+                                    <option>Panjabi</option>
+                                    <option>Tamil</option>
+                                    <option>Gujrati</option>
+                                    <option>Bengali </option> -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="form-group row">
+                            <div class="col-lg-4">
+                                <label class="form-label" for="edascampaign-call_medium">User Weight</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <span class="slider slider-blue">
+                                    <input class="slider slider-blue" value="0" min="0" max="2" step="1" name="007" type="range" id="userWeight" oninput="updateSlider(this)"/>
+                                    <span class="slider-container slider-blue">
+                                        <span class="bar">
+                                            <span style="width: 0%;"></span>
+                                            <div class="dot" id="1" style="left:50%;"></div>
+                                        </span>
+                                        <span class="bar-btn"><span>Default</span>
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-by-fields">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <label class="form-label" for="edascampaign-call_medium">Search By column</label>
+                        </div>
+                        <div class="col-lg-3">
+                            <select class="form-control" id="selectColumnType">
+                            <option>Select Column Type</option>
+                            <option value="Agent ID">Agent ID</option>
+                            <option value="Agent Name">Agent Name</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Supervisor">Supervisor</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3">
+                            <input type="search" name="" id="seachByColumnInput" placeholder="Search" class="form-control" disabled>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="table table-striped" id="userTable">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Agent ID</th>
+                            <th>Agent Name</th>
+                            <th>Manager</th>
+                            <th>Supervisor</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="fetchUsers">
+                       
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="assignUsers">Assign</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Assign User Modal - End - Krunal -->
+
+<?php
+    // ****** Js added by Krunal -- start ****** //
+    // Recording tab
+    $this->registerJs("
+        $('#recordingSubmitBtn').click(function(){
+            $('#searchRecordingForm').hide();
+            $('#recordingList').show();
+        });
+        $('.recordingManagerTable').DataTable( {} );
+    ");
+    // Pie Chart
+    $this->registerJs("
+        $('#dispositionTable').DataTable( {} );
+        setInterval(function(){ 
+        $(function () {
+            // $('.select2').select2();
+                //code goes here that will be run every 5 seconds.    
+            
+                var stored = JSON.parse(localStorage.getItem('assign_user'));
+                let result = stored.map(a => a.selected_skill);
+                const count = {};
+                result.forEach(element => {
+                count[element] = (count[element] || 0) + 1;
+                });
+            
+            var values = Object.values(count);
+            var keys = Object.keys(count);
+            var donutData = {
+              labels: keys,
+              datasets: [
+                {
+                    data: values,
+                    backgroundColor: ['#cd84f1', '#18dcff', '#ff4d4d', '#ffaf40', '#fffa65', '#32ff7e'],
+                }
+              ]
+            }
+            //-------------
+            //- PIE CHART -
+            //-------------
+            // Get context with jQuery - using jQuery's .get() method.
+            var pieChartCanvas = $('#pieChart').get(0).getContext('2d')
+            var pieData = donutData;
+            var pieOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+            }
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            new Chart(pieChartCanvas, {
+                type: 'pie',
+                data: pieData,
+                options: pieOptions
+            });
+        });
+        }, 5000);
+    ");
+
+    //Range Slider
+    $this->registerJs("
+        
+        $.fn.rangeslider = function (options) {
+            this.each(function (i, elem) {
+                var obj = $(elem); // input element
+                var defautValue = obj.attr('value');
+            
+                var slider_max = (obj.attr('max'));
+                var slider_min = (obj.attr('min'));
+                var slider_step = (obj.attr('step'));
+                var slider_stop = (slider_max - slider_min) / slider_step;
+                var step_percentage = 100 / slider_stop;
+            
+                // console.log(step_percentage);
+            
+                var color = '';
+                var classlist = obj.attr('class').split(/\s+/);
+                $.each(classlist, function (index, item) {
+                    if (item.startsWith('slider-')) {
+                    color = item;
+                    }
+                });
+            
+                if (color == '') {
+                    color = 'slider-blue';
+                }
+            
+                if (slider_stop <= 30) {
+                    var i;
+                    var dots = '';
+                    for (i = 1; i < slider_stop; i++) {
+                    dots += '<div class=\"dot\" id=\"' + i + '\" style=\"left:' + step_percentage * i + '%;\"></div>';
+                    }
+                }
+                else {
+                    var dots = '';
+                }
+            
+                obj.wrap('<span class=\"slider ' + color + '\"></span>');
+                obj.after('<span class=\"slider-container ' + color + '\"><span class=\"bar\"><span></span>' + dots + '</span><span class=\"bar-btn\"><span>Default</span></span></span>');
+                obj.attr('oninput', 'updateSlider(this)');
+                updateSlider(this);
+                return obj;
+            });
+        };
+
+        $('document').ready(function () {
+            $('#sliderUserWeight').rangeslider();
+        });
+
+    ");
+
+     // Audio Player for Hold music
+    $this->registerJs("
+        $('.upload_hold_music').on('click', function() {
+            var campaign_id = $(this).data('campaign_id');
+            if(campaign_id){
+                $.ajax({
+                    method: 'GET',
+                    url: '". $urlManager->baseUrl . "/index.php/campaign/get-queues-music" ."',
+                    data: { campaign_id : campaign_id }
+                }).done(function (data) {
+                    $('#queueMusicModal').html(data);
+                    $('#queueMusicModal').modal('toggle');
+
+                    // on change of upload music file
+                    /* $('#vaanicampaignqueue-hold_music_file').on('change', function(e) {
+                        console.log($(this));
+                        if(e.target.files[0]){
+                            var filename = e.target.files[0].name;
+                            $(this).parent().find('.music_name').html(`<span class='music-text'>` + filename + `</span> <span class=''><i class='fa fa-upload'></i></span>`);
+                            $(this).parent().find('.music_label .btn-default').hide();
+                        }else{
+                            $(this).parent().find('.music_name').html(``);
+                            $(this).parent().find('.music_label .btn-default').show();
+                        }
+                    }); */
+                });
+            }
+        });
+        
+    ");
+    // ****** Js added by Krunal -- End ****** //
+?>
+
+<?php
+    $campaign_names = User::encrypt_data($model->campaign_id);
+    // display loader on delete
+    $this->registerJs("
+        $('.delete_campaign').on('click', function(){
+            var content = $(this).data('message');
+            if(confirm(content)){
+                $('#LoadingBox').show();
+            }else{
+                return false;
+            }
+        });
+    ");
+
+    // ****** Js for tabs and related script added by Krunal ****** //
+    // Tabs
+    $this->registerJs("
+        
+        //***** Click of ADD Campiagn Button showing tabs *****/
+        $('#addCampaignBtn').click(function () {
+            $('#campaignList').hide();
+            $('#tabsSection').show();
+        });
+        
+        //***** ADD Campiagn Button *****/
+        $('#edascampaign-select_audio').change(function () {
+            var text = $(this).find(':selected').text();
+            // alert(text);
+            var btn = $(this).parent().siblings().children('button').attr('data-target', '#preview_audio');
+            $(btn).attr('disabled', false);
+        });
+        $('.backCampaignBtn').click(function () {
+            $('#campaignList').show();
+            $('#tabsSection').hide();
+        });
+        
+        $('#audioDropDown').click(function (ev) {
+            $('.dropdown-content').toggle();
+            ev.stopPropagation();
+            $(this).siblings().children().children().find('h');
+        });
+
+        // Campaign Run Time's pop up 
+        var text = '<div class=\"modal-backdrop\"></div>';
+        $('#viewMore').click(function () {
+            setTimeout(function(){
+                $('.offcanvas').addClass('show');
+                }, 200);
+                $('.offcanvas').addClass('showing').delay(1000).queue(function(next){
+                $(this).removeClass('showing');
+                next();
+            });
+            $('body').append(text);
+        });
+        function close() {
+            $('.offcanvas').removeClass('show');
+            $('.modal-backdrop').remove();
+            $('.offcanvas').addClass('showing').delay(1000).queue(function(next){
+                $(this).removeClass('showing');
+                next();
+            });
+        }
+        $(document).on('click', '.modal-backdrop', function () {
+            close();
+        });
+        $('#closeOffCanvasBtn').click(function () {
+            close();
+        });
+        
+    ");
+    // Audio Player for Hold music
+    $this->registerJs("
+        //Elements:
+        var source = $('#audiotrack')[0],
+        track = $('#track'),
+        progress = $('#progress'),
+        play = $('#play'),
+        pause = $('#pause'),
+        playPause = $('#play, #pause'),
+        stop = $('#stop'),
+        mute = $('#mute'),
+        volume = $('#volume'),
+        level = $('#level');
+
+        //Vars:
+        var totalTime,
+        timeBar,
+        newTime,
+        volumeBar,
+        newVolume,
+        cursorX;
+
+        var interval = null;
+
+        $(document).ready(function () {
+            //Track:
+
+            //Progress bar
+            function barState() {
+                if (!source.ended) {
+                    var totalTime = parseInt(source.currentTime / source.duration * 100);
+                    progress.css({ 'width': totalTime + 1 + '%' });
+                }
+                else if (source.ended) {
+                    play.show();
+                    pause.hide();
+                    clearInterval(interval);
+                };
+                console.log('playing...');
+            };
+
+            //Event trigger:
+            track.click(function (e) {
+                if (!source.paused) {
+                    var timeBar = track.width();
+                    var cursorX = e.pageX - track.offset().left;
+                    var newTime = cursorX * source.duration / timeBar;
+                    source.currentTime = newTime;
+                    progress.css({ 'width': cursorX + '%' });
+                };
+            });
+
+            //Button (Play-Pause)
+            $('#pause').hide();
+            function playPause() {
+                if (source.paused) {
+                    source.play();
+                    pause.show();
+                    play.hide();
+                    interval = setInterval(barState, 50); //Active progress bar.
+                    console.log('play');
+                }
+                else {
+                    source.pause();
+                    play.show();
+                    pause.hide();
+                    clearInterval(interval);
+                    console.log('pause');
+                };
+            };
+
+            // playPause.click(function () {
+            //     playPause();
+            // });
+            function stop() {
+                source.pause();
+                source.currentTime = 0;
+                progress.css({ 'width': '0%' });
+                play.show();
+                pause.hide();
+                clearInterval(interval);
+            };
+
+            // stop.click(function () {
+            //     stop();
+            // });
+
+            function mute() {
+                if (source.muted) {
+                source.muted = false;
+                mute.removeClass('mute');
+                console.log('soundOFF');
+                }
+                else {
+                source.muted = true;
+                mute.addClass('mute');
+                console.log('soundON');
+                };
+            };
+
+            // mute.click(function () {
+            //     mute();
+            // });
+            
+            //Volume bar
+            volume.click(function (e) {
+                var volumeBar = volume.width();
+                var cursorX = e.pageX - volume.offset().left;
+                var newVolume = cursorX / volumeBar;
+                source.volume = newVolume;
+                level.css({ 'width': cursorX + 'px' });
+                source.muted = false;
+                mute.removeClass('mute');
+            });
+        }); //Document ready end.
+    ");
+
+    // Queue tab
+    $this->registerJs("
+        $(document).on('click', '#fetchLeftToRightAll', function () {
+            var text = $('#unassignedAgentTable').find('tbody tr').prepend();
+            $('#assignedAgentTable tbody').prepend(text);
+            var last_td = '<a href=\"javascript:void(0)\" class=\"moveAssignAgent\" title=\"Unassign\" aria-label=\"Unassign\" data-pjax=\"0\"><i class=\"fas fa-chevron-left\"></i> Unassign</a>';
+            $( '#assignedAgentTable tbody tr td:last-child' ).html(last_td);
+            $('#unassignedAgentTable').find('tbody tr').remove();
+            var tablebody = $('#unassignedAgentTable tbody');
+            if (tablebody.children().length == 0) {
+                tablebody.html(\"<tr id='noData'><td colspan='7' class='text-center'>No Data</td></tr>\");
+                $('#fetchLeftToRightAll').attr('disabled', true);
+                $('#fetchRightToLeftAll').attr('disabled', false);
+            }
+            $('#assignedAgentTable #noData').remove();
+        });
+        
+        $(document).on('click', '#fetchRightToLeftAll', function () {
+            var text = $('#assignedAgentTable').find('tbody tr').prepend();
+            $('#unassignedAgentTable tbody').prepend(text);
+            var last_td = '<a href=\"javascript:void(0)\" class=\"moveUnassignAgent\" title=\"Assign\" aria-label=\"Assign\" data-pjax=\"0\">Assign <i class=\"fas fa-chevron-right\"></i></a>';
+            $( '#unassignedAgentTable tbody tr td:last-child' ).html(last_td);
+            $('#assignedAgentTable').find('tbody tr').remove();
+            var tablebody = $('#assignedAgentTable tbody');
+            if (tablebody.children().length == 0) {
+            tablebody.html(\"<tr id='noData'><td colspan='7' class='text-center'>No Data</td></tr>\");
+            }
+            $('#unassignedAgentTable #noData').remove();
+        
+            $('#fetchLeftToRightAll').attr('disabled', false);
+            $('#fetchRightToLeftAll').attr('disabled', true);
+        });
+        // Unassigned Agent Table
+        $('#unassignedAgentTable').on('click', '.moveUnassignAgent', function () {
+            var currentRow = $(this).closest('tr');
+            var col1 = currentRow.find('td:eq(0)').html(); // get current row 1st table cell TD value
+            var col2 = currentRow.find('td:eq(1)').html(); // get current row 2nd table cell TD value
+            var col3 = currentRow.find('td:eq(2)').html(); // get current row 3rd table cell TD value
+            var col4 = currentRow.find('td:eq(3)').html(); // get current row 4th table cell TD value
+            var col5 = currentRow.find('td:eq(4)').html(); // get current row 5th table cell TD value
+            $('#assignedAgentTable').prepend('<tr><td>' + col1 + '</td><td>' + col2 + '</td><td>' + col3 + '</td><td>' + col4 + '</td><td>' + col5 + '</td><td><a href=\"javascript:void(0)\" class=\"moveAssignAgent\" title=\"Unassign\" aria-label=\"Unassign\" data-pjax=\"0\"><i class=\"fas fa-chevron-left\"></i> Unassign</a></td></tr>');
+            currentRow.remove();
+            $('#noData').remove();
+            var tablebody = $('#unassignedAgentTable tbody');
+            if (tablebody.children().length == 0) {
+                tablebody.html(\"<tr id='noData'><td colspan='6' class='text-center'>No Data</td></tr>\");
+                $('#fetchLeftToRightAll').attr('disabled', true);
+                $('#fetchRightToLeftAll').attr('disabled', false);
+            }
+            $('#fetchRightToLeftAll').attr('disabled', false);
+        });
+        // Assigned Agent Table
+        $('#assignedAgentTable').on('click', '.moveAssignAgent', function () {
+            var currentRow = $(this).closest('tr');
+            var col1 = currentRow.find('td:eq(0)').html(); // get current row 1st table cell TD value
+            var col2 = currentRow.find('td:eq(1)').html(); // get current row 2nd table cell TD value
+            var col3 = currentRow.find('td:eq(2)').html(); // get current row 3rd table cell TD value
+            var col4 = currentRow.find('td:eq(3)').html(); // get current row 4th table cell TD value
+            var col5 = currentRow.find('td:eq(4)').html(); // get current row 5th table cell TD value
+            $('#unassignedAgentTable').prepend('<tr><td>' + col1 + '</td><td>' + col2 + '</td><td>' + col3 + '</td><td>' + col4 + '</td><td>' + col5+ '</td><td><a href=\"javascript:void(0)\" class=\"moveUnassignAgent\" title=\"Assign\" aria-label=\"Assign\" data-pjax=\"0\">Assign <i class=\"fas fa-chevron-right\"></i></a></td></tr>');
+            currentRow.remove();
+            $('#noData').remove();
+            var tablebody = $('#assignedAgentTable tbody');
+            if (tablebody.children().length == 0) {
+                tablebody.html(\"<tr id='noData'><td colspan='6' class='text-center'>No Data</td></tr>\");
+                $('#fetchLeftToRightAll').attr('disabled', false);
+                $('#fetchRightToLeftAll').attr('disabled', true);
+            }
+            $('#fetchLeftToRightAll').attr('disabled', false);
+        });
+        $('.dataTable').DataTable( {} );
+
+        
+    ");
+ 
+?>
+<script>
+    // var users = <?php //print_r($users);?>
+    // console.log(users);
+     // add campaign add data to localstoreage 
+    function AddCampaign(){
+        // var campaign_data = [];
+        var client_id = $('#edascampaign-client_id').val();
+        var campaign_name = $('#edascampaign-campaign_name').val();
+        var campaign_type = $('#edascampaign-campaign_type').val();
+        var campaign_sub_type = $('#edascampaign-campaign_sub_type').val();
+        var preview = $('#edascampaign-preview').val();
+        var time_preview = $('#edascampaign-time_preview').val();
+        var call_medium = $('#edascampaign-call_medium').val();
+        var crm_name = $('#edascampaign-crm_name').val();
+        var select_audio = $('#edascampaign-select_audio').val();
+        var audioList = $('#edascampaign-audioList').val(); 
+        var cli_number = $('#edascampaign-cli_number').val();
+        var outbound_criteria = $('#edascampaign-outbound_criteria').val();
+        var call_window = $('#selected_call_window').val();
+        var campaign_call_timeout = $('#edascampaign-call_timeout').val();
+        var campaign_operators = $('#edascampaign-campaign_operators').val();
+        var campaign_stat = $('#edascampaign-campaign_status').attr('aria-pressed');
+        if(campaign_stat=='true'){
+            var campaign_status = '1'
+        }else{
+            var campaign_status = '2'
+        }
+            
+
+        const campaigns = {
+            client_id: client_id,
+            campaign_name: campaign_name,
+            campaign_type: campaign_type,
+            campaign_sub_type: campaign_sub_type,
+            preview: preview,
+            time_preview: time_preview,
+            call_medium:call_medium,
+            crm_name: crm_name,
+            select_audio: select_audio,
+            audioList : audioList,
+            cli_number: cli_number,
+            campaign_call_timeout:campaign_call_timeout,
+            campaign_operators:campaign_operators,
+            outbound_criteria:outbound_criteria,
+            campaign_status: campaign_status,
+            call_window : call_window,
+        }
+        // campaign_data.push(campaigns);
+        window.localStorage.setItem('campaign_data',JSON.stringify(campaigns));
+    }
+    // add skill
+    function Addskill(){
+        var stored = JSON.parse(localStorage.getItem("campaign_data"));
+        
+        var add_skill_array1 = stored.queues;
+        // console.log(add_skill_array1);
+        if(add_skill_array1==null){
+             var add_skill_array=[];
+        }else{
+           var add_skill_array = stored.queues; 
+        }
+        var add_skill = $('#edascampaign-add_skill').val();
+        var sliderUserWeight = $('#edascampaign-sliderUserWeight').val();
+        var call_window = $('#queue_call_window').val();
+        var call_timeout = $('#call_timeout').val();
+        var dni = $('#queue_dni_id').val();
+        var criteria = $('#vaanicampaignqueue-criteria').val();   
+        
+            const sk = {
+                add_skill: add_skill,
+                sliderUserWeight: sliderUserWeight,
+                call_window : call_window,
+                call_timeout : call_timeout,
+                dni : dni,
+                criteria : criteria,
+            };
+            add_skill_array.push(sk);
+            const skills = 
+                {
+                    queues : add_skill_array, 
+                };
+        
+        // stored.push(skills);
+                var storedskill = $.extend( stored, skills );
+        
+        // stored.push(campaigns2);
+                window.localStorage.setItem('campaign_data',JSON.stringify(storedskill));
+                
+    }
+    
+    // add agents
+    function AddAgents(){
+        var stored = JSON.parse(localStorage.getItem("campaign_data"));
+
+        var manual_call = $('#edascampaign-manual_call').attr('aria-pressed');
+        var call_hangup = $('#edascampaign-call_hangup').attr('aria-pressed');
+        var conference = $('#edascampaign-conference').attr('aria-pressed');
+        var blind_transfer = $('#edascampaign-blind_transfer').attr('aria-pressed');
+        var consultation = $('#edascampaign-consultation').attr('aria-pressed');
+        var warm_transfer_to_inb = $('#edascampaign-warm_transfer_to_inb').val();
+        var require_disposition = $('#edascampaign-require_disposition').val();
+        var disposition = $('#edascampaign-disposition_plan_id').val();
+        var call_button = $('#edascampaign-call_button').attr('aria-pressed');
+        if (manual_call=='true' || call_hangup=='true' || conference=='true'||blind_transfer=='true' || consultation=='true' || call_button=='true') {
+                var manual_call = '1'; 
+                var call_hangup = '1';   
+                var conference = '1';  
+                var blind_transfer = '1';  
+                var consultation = '1';
+                var call_button = '1'; 
+        }else{
+                var manual_call = '2'; 
+                var call_hangup = '2';   
+                var conference = '2';  
+                var blind_transfer = '2';  
+                var consultation = '2';
+                var call_button = '2'; 
+        }
+        const agents = 
+            {
+                manual_call: manual_call,
+                call_hangup: call_hangup,
+                conference: conference,
+                blind_transfer: blind_transfer,
+                consultation: consultation,
+                warm_transfer_to_inb: warm_transfer_to_inb,
+                require_disposition: require_disposition,
+                disposition: disposition,
+                call_button: call_button,
+            };
+        
+        // stored.push(agents);
+        var storedagents = $.extend( stored, agents );
+        
+        window.localStorage.setItem('campaign_data',JSON.stringify(storedagents));
+    }
+    // add dailer
+    function Adddailer(){
+        var stored = JSON.parse(localStorage.getItem("campaign_data"));
+
+        var campaign_sl_time = $('#edascampaign-campaign_sl_time').val();
+        var dial_mode = $('#edascampaign-dial_mode').val();
+        var campaign_sl_percent = $('#edascampaign-campaign_sl_percent').val();
+        var preview_autodial = $('#edascampaign-preview_autodial').val();
+        var call_answer_delay = $('#edascampaign-call_answer_delay').val();
+        var pacing_ratio = $('#edascampaign-pacing_ratio').val();
+        var max_callback_days = $('#edascampaign-max_callback_days').val();
+        var basket_count = $('#edascampaign-basket_count').val();
+        var abandoned_percent = $('#edascampaign-abandoned_percent').val();
+
+        const dailers = {
+            campaign_sl_time: campaign_sl_time,
+            campaign_sl_percent: campaign_sl_percent,
+            call_answer_delay: call_answer_delay,
+            preview_autodial: preview_autodial,
+            pacing_ratio: pacing_ratio,
+            dial_mode: dial_mode,
+            abandoned_percent: abandoned_percent,
+            basket_count: basket_count,
+            max_callback_days: max_callback_days,
+        };
+
+        // stored.push(dailers);
+        var storeddailers = $.extend( stored, dailers );
+        
+        window.localStorage.setItem('campaign_data',JSON.stringify(storeddailers));
+
+    }
+    // add recordings
+    function Addrecordings(){
+        var stored = JSON.parse(localStorage.getItem("campaign_data"));
+
+        var direction = $('#edascampaign-direction').val();
+        var campaign_queue = $('#edascampaign-campaign_queue').val();
+        var start_date = $('#edascampaign-start_date').val();
+        var end_date = $('#edascampaign-end_date').val();
+        var agent_id = $('#edascampaign-agent_id').val();
+        var phone_number = $('#edascampaign-phone_number').val();
+
+        const recordings = {
+            direction: direction,
+            campaign_queue: campaign_queue,
+            start_date: start_date,
+            end_date: end_date,
+            agent_id: agent_id,
+            phone_number: phone_number,
+        };
+
+        // stored.push(recordings);
+        var storedrecordings = $.extend( stored, recordings );
+        
+        window.localStorage.setItem('campaign_data',JSON.stringify(storedrecordings));
+
+    }
+    // validation for skills 
+    $('#assignUsers').hide(); 
+    $("#options").change(function(){
+        var skillss =  $("#options").val();
+        // var check = $(":checkbox");
+        if(skillss){
+            $('#assignUsers').show();
+        }else{
+            $('#assignUsers').hide();
+        }
+    });
+    // assign users to localstorage 
+    function AssignUsers(){
+        var stored = JSON.parse(localStorage.getItem("assign_user"));
+        var assign_user_array1 = stored;
+        var selected_skill = $('#options').val();
+        if (!$('#options').val()) {
+            alert("select skills");
+            return
+        }
+        var user_weight =  $('#userWeight').val();
+        // alert(selected_skill);
+        // alert(user_weight);
+        if(assign_user_array1==null){
+             var assign_user_array=[];
+        }else{
+           var assign_user_array = stored; 
+        }
+        var table = $("#userTable :input");
+        $("#userTable :input").each(function(){
+            var input = $(this).closest('tr').children('td').eq(1).attr("id");
+                const cb = document.querySelector('#user_id'+input);
+                if(cb.checked){
+                    var agent_id = $(this).closest('tr').children('td').eq(1).attr("id");
+                    var agent_name = $(this).closest('tr').children('td').eq(2).attr("id");
+                    var agent_supervisor = $(this).closest('tr').children('td').eq(3).attr("id");
+                    var agent_manager = $(this).closest('tr').children('td').eq(4).attr("id");
+                    var Status = 'Inactive';
+                    const assign_users= {
+                        agent_id:agent_id,
+                        agent_name:agent_name,
+                        agent_supervisor:agent_supervisor,
+                        agent_manager:agent_manager,
+                        selected_skill:selected_skill,
+                        user_weight:user_weight,
+                        Status:Status,
+                    }; 
+                    assign_user_array.push(assign_users);
+                    window.localStorage.setItem('assign_user',JSON.stringify(assign_user_array));
+                    
+                }
+             
+        });
+        
+    }
+    // display assigned Users
+    function displayAssinedUser(){
+        var stored = JSON.parse(localStorage.getItem("assign_user"));
+        let result = stored.map(a => a);
+        var tablerows ;
+        if(result.length > 0){
+            result.forEach(o => {
+                
+                    tablerows += '<tr>';
+                    tablerows += '<td>'+o.agent_id +'</td>';
+                    tablerows += '<td>'+ o.agent_name +'</td>';
+                    tablerows += '<td>'+ o.selected_skill +'</td>';
+                    tablerows += '<td>'+ o.user_weight +'</td>';
+                    tablerows += '<td>'+ o.agent_supervisor +'</td>';
+                    tablerows += '<td>'+ o.agent_manager +'</td>';
+                    tablerows += '<td><a href=\"javascript:void(0)\" class=\"moveUnassignAgent\">Unassigned</a> | <a href=\"javascript:void(0)\" class=\"text-danger\"><span class=\"fa fa-trash\"></span></a></td>';
+                    tablerows += '</tr>';
+                   
+                });
+                $('#displayAssignedUser').html(tablerows);  
+               
+        }
+    }
+    //
+    function displayunassinedUser(){
+        var stored = JSON.parse(localStorage.getItem("assign_user"));
+        let result = stored.map(a => a);
+        var tablerows ;
+        if(result.length > 0){
+            result.forEach(o => {
+                
+                    tablerows += '<tr>';
+                    tablerows += '<td>'+o.agent_id +'</td>';
+                    tablerows += '<td>'+ o.agent_name +'</td>';
+                    
+                    tablerows += '<td>'+ o.user_weight +'</td>';
+                    tablerows += '<td>'+ o.agent_manager +'</td>';
+                    tablerows += '<td>'+ o.agent_supervisor +'</td>';
+                    tablerows += '<td><a href=\"javascript:void(0)\" class=\"moveUnassignAgent\">Assign <i class=\"fas fa-chevron-right\"></i></a></td>';
+                    tablerows += '</tr>';
+                   
+                });
+                $('#unassignedd').html(tablerows);  
+               
+        }
+    }
+    // genral form
+    $("#key1").click(function() {
+        AddCampaign();
+        $("#tabs-tab #tabs-general-tab").removeClass('active');
+        $("#tabs-tab #tabs-skill-tab").addClass('active');
+        
+        $("#tabs-tabContent #tabs-general").removeClass('active show');
+        $("#tabs-tabContent #tabs-skill").addClass('active show');
+        // alert("campaign data added to localstorage successfully");
+    });
+    // skill data 
+    $("#add_skill").click(function() {
+        var add_skill = $('#edascampaign-add_skill').val().length;
+        
+        var sliderUserWeight = $('#edascampaign-sliderUserWeight').val().length;
+        var call_window = $('#queue_call_window').val().length;
+        var call_timeout = $('#call_timeout').val().length;
+        var dni = $('#queue_dni_id').val().length;
+        var criteria = $('#vaanicampaignqueue-criteria').val().length; 
+        // console.log(add_skill);console.log(sliderUserWeight);console.log(call_window);console.log(call_timeout);console.log(dni);console.log(criteria);  
+        if (add_skill===0) {
+            alert("Add Skill fields are required In queue !");
+            return false;
+        }else if(sliderUserWeight===0){
+            alert("User Weight fields are required In queue !");
+            return false;
+        }else if(call_window===0){
+            alert("Call Window fields are required In queue !");
+            return false;
+        }else if(call_timeout===0){
+            alert("Call Timeout fields are required In queue !");
+            return false;
+        }else if(dni===0){
+            alert("DNI fields are required In queue !");
+            return false;
+        }else if(criteria===0){
+            alert("Criteria fields are required In queue !");
+            return false;
+        }else{ 
+            Addskill();
+            alert("skill data added to localstorage successfully");
+        }
+    });
+    // agent data
+    $("#add_agents").click(function() {
+        AddAgents();
+        $("#tabs-tab #tabs-agent-tab").removeClass('active');
+        $("#tabs-tab #tabs-dialer-tab").addClass('active');
+        $("#tabs-tabContent #tabs-agent").removeClass('active show');
+        $("#tabs-tabContent #tabs-dialer").addClass('active show');
+        alert("Agents data added to localstorage successfully");
+    });
+    $("#add_queues").click(function() {
+        $("#tabs-tab #tabs-queues-tab").removeClass('active');
+        $("#tabs-tab #tabs-agent-tab").addClass('active');
+        $("#tabs-tabContent #tabs-queues").removeClass('active show');
+        $("#tabs-tabContent #tabs-agent").addClass('active show');
+        // alert("Agents data added to localstorage successfully");
+    });
+    // add_dailer
+    $("#add_dailer").click(function() {
+        Adddailer();
+        $("#tabs-tab #tabs-dialer-tab").removeClass('active');
+        $("#tabs-tab #tabs-recording-tab").addClass('active');
+        $("#tabs-tabContent #tabs-dialer").removeClass('active show');
+        $("#tabs-tabContent #tabs-recording").addClass('active show');
+        alert("dailer data added to localstorage successfully");
+    });
+    // add_recordings
+    $("#recordingSubmitBtn").click(function() {
+        Addrecordings();
+        alert("recordings data added to localstorage successfully");
+    });
+    // add_leadupload
+    $("#leadupload").click(function() {
+        Addleadupload();
+        alert("lead Upload data added to localstorage successfully");
+    });
+    // reset all form
+    $("#reset").click(function() {
+        localStorage.clear();
+        // localStorage.clear(); 
+        alert("Handler for .click() called.");
+    });
+    // fetching datat from local storage 
+    $(".finalsubmit").click(function() {
+                $("[id='despoName']") .each(function(){
+                    // alert($(this).html());
+                    var disposition_id = $(this).next().next().next().next().next().next().children().data('id');
+                    var disposition_name = $(this).html();
+                    var short_code = $(this).next().html();
+                    var disposition_type = $(this).next().next().html();
+                    var disposition_result = $(this).next().next().next().html();
+                    var max_retry_count = $(this).next().next().next().next().html();
+                    var retry_delay = $(this).next().next().next().next().next().html();
+                
+                    // storing to local storage start
+                    var stored = JSON.parse(localStorage.getItem("campaign_data"));
+                    var add_disposition_array1 = stored.set_dispositions_configurations;
+                    // console.log(add_disposition_array1);
+                    if(add_disposition_array1==null){
+                        var add_disposition_array=[];
+                    }else{
+                        var add_disposition_array = stored.set_dispositions_configurations; 
+                    }
+                
+                    const dispo_config = {
+                        disposition_id:disposition_id,
+                        disposition_type:disposition_type,
+                        disposition_name: disposition_name,
+                        short_code: short_code,
+                        disposition_result:disposition_result,
+                        max_retry_count : max_retry_count,
+                        retry_delay : retry_delay,
+                        
+                    };
+                    add_disposition_array.push(dispo_config);
+                    const disposition_config = {
+                            set_dispositions_configurations : add_disposition_array, 
+                    };
+                
+                var storeddisposition = $.extend( stored, disposition_config );
+                window.localStorage.setItem('campaign_data',JSON.stringify(storeddisposition));
+            });
+        const campaign_data = localStorage.getItem('campaign_data');
+        $('#LoadingBox').show();
+        $.ajax({
+            url: '<?php echo $urlManager->baseUrl ?>/index.php/campaign-config/local-storage-data',
+            type: 'post',
+            data: {campaign_data : campaign_data},
+            success: function(response){
+                $('#LoadingBox').hide();
+                alert("data send to controller successfully");
+                window.localStorage.removeItem('campaign_data');
+                window.location.href = "index";
+            }
+        });
+    });
+    // key1
+    $("#tab_skill").click(function() {
+        // alert("hello");
+        // var general_tab = $('#tabs-general-tab').attr()
+        $("#tabs-tab #tabs-skill-tab").removeClass('active');
+        $("#tabs-tab #tabs-queues-tab").addClass('active');
+        
+        $("#tabs-tabContent #tabs-skill").removeClass('active show');
+        $("#tabs-tabContent #tabs-queues").addClass('active show');
+        
+    });
+
+    $("#recordingtab").click(function() {
+        $("#tabs-tab #tabs-recording-tab").removeClass('active');
+        $("#tabs-tab #tabs-disposition-tab").addClass('active');
+        $("#tabs-tabContent #tabs-recording").removeClass('active show');
+        $("#tabs-tabContent #tabs-disposition").addClass('active show');
+    });
+    // assign user
+    $("#addusermodal").click(function() {
+        // $("#options").prop('required',true);
+        var stored = JSON.parse(localStorage.getItem("campaign_data"));
+        let result = stored.queues.map(a => a.add_skill);
+        if(result.length > 0){
+                var optionList = '<option value=\"\">Select...</option>';
+                result.forEach(o => {
+                    optionList += '<option value=\"'+o+'\">'+ o +'</option>';
+                });
+                $('#options').html(optionList);   
+        }else if(result.length <= 0){
+                var optionList = '<option value=\"\">Select...</option>';
+                $('#options').html(optionList);
+        }
+    });
+    // assign users assignUsers
+    $("#assignUsers").click(function() {
+        
+        AssignUsers();
+        displayAssinedUser();
+        alert("assign users");
+    });
+    // inbound hide fields 
+    
+    $("#edascampaign-campaign_type").change(function(){
+        var campaign_type =  $("#edascampaign-campaign_type").val();
+        if(campaign_type == 2){
+            // alert(campaign_type);
+            $("#CampaignSubType").hide();
+            $("#Preview").hide();
+            $("#TimePreview").hide();
+            $("#outbound_campaign").hide();
+            $("#inbound_campaign").parent().addClass('justify-content-center');
+            $("#inbound_campaign").show();
+            $("#outbound_criteria").hide();
+            $("#call_medium").show();
+            $("#edascampaign-campaign_sub_type").prop('required',false);
+            
+        }else if(campaign_type == 3){
+            $("#outbound_campaign").show();
+            $("#inbound_campaign").hide();
+            $("#outbound_campaign").parent().addClass('justify-content-center');
+            $("#call_medium").hide();
+            $("#CampaignSubType").show();
+            $("#Preview").show();
+            $("#TimePreview").show();
+            $("#outbound_criteria").show();
+            $("#edascampaign-campaign_sub_type").prop('required',true);
+        }else{
+            $("#CampaignSubType").show();
+            $("#Preview").show();
+            $("#TimePreview").show();
+            $("#outbound_campaign").show();
+            $("#inbound_campaign").show();
+            $("#edascampaign-campaign_sub_type").prop('required',true);
+        }
+
+    });
+    //sub type outbond
+    $("#edascampaign-campaign_sub_type").change(function(){
+        var campaign_sub_type =  $("#edascampaign-campaign_sub_type").val();
+        if(campaign_sub_type==2){
+            $('#TimePreview').show();
+            $('#outbound_criteria').hide();
+            $(".pacing_ratio").hide();
+            $(".abandoned_percent").hide();
+            $(".basket_count").hide();
+        }else if(campaign_sub_type==3){
+            $('#TimePreview').hide();
+            $('#outbound_criteria').show();
+            $(".pacing_ratio").show();
+            $(".basket_count").show();
+        }else if(campaign_sub_type==4){
+            $('#outbound_criteria').show();
+            $(".pacing_ratio").show();
+            $(".abandoned_percent").show();
+            $(".basket_count").show();
+        }
+    }); 
+
+    // call run times view 
+    $("#selected_call_window").change(function(){
+        var config_id = $(this).val();
+       $.ajax({
+            url: '<?php echo $urlManager->baseUrl ?>/index.php/campaign-config/call-run-time',
+            type: 'post',
+            data: {config_id : config_id},
+            success: function(response){
+             
+                var obj = jQuery.parseJSON( response);
+                var tablerows;
+                $.each(obj, function( index, value ) {
+                    // console.log(value['id']);
+                    tablerows += '<tr>';
+                    tablerows += '<td>'+value['day'] +'</td>';
+                    tablerows += '<td>'+ value['start_time'] +'</td>';
+                    tablerows += '<td>'+ value['end_time'] +'</td>';
+                    tablerows += '</tr>';
+                });
+                $('#callruntimes').html(tablerows);  
+            }
+        });
+    });
+    // queue tab 
+    $("#edascampaign-call_medium").change(function(){
+        var campaign_type =  $("#edascampaign-call_medium").val();
+        if(campaign_type==1){
+            $('.add-skill-form').show();
+        }
+    });
+    // on change of selected skill 
+    $("#options").change(function(){
+        var queue_ids =  $("#options").val();
+        var client_id = $('#edascampaign-client_id').val();
+        // alert(campaign_type);
+        $.ajax({
+            method: 'GET',
+            url: '<?php echo $urlManager->baseUrl ?>/index.php/campaign-config/assign-users',
+            data: {queue_ids: queue_ids,client_id:client_id}
+        }).done(function(data){
+            var stored = JSON.parse(data);
+                let result = stored.map(a => a.user_id);
+                const count = {};
+                result.forEach(element => {
+                count[element] = (count[element] || 0) + 1;
+                });
+                // array of user id on select of skill 
+                var not_assigned_user_ids = Object.keys(count);
+                var assigned_user_ids = [];
+                var assigned_mapped_skills = [];
+                var indexes = [];
+                var assigned_user_details = JSON.parse(localStorage.getItem("assign_user"));
+                let assigned_user_details_maped = assigned_user_details.map(a => a.selected_skill);
+                for (let index = 0; index < assigned_user_details_maped.length; index++) {
+                    // console.log(assigned_user_details_maped[index]);
+                    if (assigned_user_details_maped[index] === queue_ids) {
+                        indexes.push(index);
+                    }
+                }
+                // index.push(assigned_user_details_maped.findIndex(selected_skill => selected_skill == queue_ids)); 
+                assigned_user_details.forEach(function (value, key) {
+                    // console.log(key);
+                    // console.log(indexes);
+                    indexes.forEach(indexe =>  {
+                        if(key == indexe){
+                            // console.log(key);
+                            // console.log(assigned_user_details[indexes]);
+                         assigned_mapped_skills.push(assigned_user_details[indexe]);
+                        //  console.log(assigned_mapped_skills);
+                        }
+                    });
+                })
+                // console.log(assigned_mapped_skills);
+                let s = stored.map(s => $.trim(s.user_id));
+                var tablerows;
+                var ind=[];
+                console.log(s);
+                console.log(assigned_mapped_skills);
+
+                $.each(assigned_mapped_skills, function(key, val){
+                    var ele_val = $.trim(val.agent_id);
+                    console.log(ele_val);
+
+                    $.each(s, function(k, v){
+                        if(v !== ele_val){
+                            ind.push(k);
+                        }
+                    });
+
+                    /* if(!$.inArray(ele_val, s)){
+                        ind.push(s.indexOf(ele_val));
+                    }else{
+                        console.log(s.indexOf(ele_val));
+                        
+                    } */
+                });
+
+                // assigned_mapped_skills.forEach(element => {
+                //     var ele_val = $.trim(element.agent_id);
+                //     console.log(ele_val);
+                //     // let indexx = s.findIndex(user_id => user_id != ele_val); 
+                //     if(!$.inArray(ele_val, s)){
+                //         ind.push(s.indexOf(ele_val));
+                //     }else{
+                //         console.log(s.indexOf(ele_val));
+                        
+                //     }
+                //     // for (let index = 0; index < s.length; index++) {
+                //     //     console.log(element.agent_id);
+                //         // console.log(s[index] !== element.agent_id);
+                //         /* if (s[index] != element.agent_id) {
+                //             console.log(s[index]+'+'+element.agent_id);
+                //             ind.push(index);
+                //         }else{
+                            
+                //         } */
+                //     // }
+                // });
+                // console.log(ind);
+                ind.forEach(element => {
+                    // console.log(element);
+                            tablerows += '<tr>';
+                            tablerows += '<td><input type=\"checkbox\" class=\"chkbox\" id=\"user_id'+stored[element].user_id+'\" name=\"\" value=\"\"></td>';
+                            tablerows += '<td id=\"'+stored[element].user_id+'\">'+stored[element].user_id +'</td>';
+                            tablerows += '<td id=\"'+stored[element].user_name+'\">'+ stored[element].user_name+'</td>';
+                            tablerows += '<td id=\"'+stored[element].manager_id+'\">'+ stored[element].manager_id+'</td>';
+                            tablerows += '<td id=\"'+stored[element].supervisor_id+'\">'+ stored[element].supervisor_id +'</td>';
+                            tablerows += '<td><a href=\"javascript:void(0)\" class=\"text-danger\"><span class=\"fa fa-trash\"></span></a></td>';
+                            tablerows += '</tr>';
+                });
+                $('#fetchUsers').html(tablerows);  
+ 
+        });
+
+    });
+    // agent tab 
+    $("#edascampaign-require_disposition").change(function(){
+        var require_disposition =  $("#edascampaign-require_disposition").val();
+        if(require_disposition==1){
+            $("#edascampaign-disposition").prop('required',true);
+        }else{
+            $("#edascampaign-disposition").prop('required',false);
+        }
+    });
+
+
+    // // campaign dispositions
+    var mrt_cut ;
+    var rt_de;
+    function fetchDispo(plan_id, campaign_id){
+        $.ajax({
+            method: 'GET',
+            url: '<?php echo $urlManager->baseUrl ?>/index.php/campaign/get-dispositions',
+            data: {plan_id: plan_id, campaign_id : campaign_id}
+        }).done(function(data){
+            // console.log(data);
+            $('.dispo_details').html(data);
+            var tablerows;
+            $("[id='vaanidispositions-disposition_name']") .each(function(){
+                var disposition_type = $(this).parent().prev().val();
+                var disposition_id = $(this).parent().prev().prev().val();
+                // alert(disposition_type);
+                var short_code = $(this).parent().parent().next().children().children().attr('value');
+                var max_retry_count = $(this).parent().parent().next().next().children().children().attr('value');
+                var retry_delay = $(this).parent().parent().next().next().next().children().children().attr('value');
+                var type = disposition_type== 1 ? 'Success': disposition_type== 2 ? 'Failed': disposition_type== 3 ? 'Callback' : disposition_type== 4 ? 'DNC' : 'Other' ; 
+                // // storing to local storage start
+                // var stored = JSON.parse(localStorage.getItem("campaign_data"));
+                // var add_disposition_array1 = stored.set_dispositions_configurations;
+                // // console.log(add_disposition_array1);
+                // if(add_disposition_array1==null){
+                //     var add_disposition_array=[];
+                // }else{
+                //      var add_disposition_array = stored.set_dispositions_configurations; 
+                // }
+                // // if(){
+                //     const dispo_config = {
+                //         disposition_id:disposition_id,
+                //         disposition_type:disposition_type,
+                //         disposition_name: $(this).val(),
+                //         short_code: short_code,
+                //         max_retry_count : max_retry_count,
+                //         retry_delay : retry_delay,
+                        
+                //     };
+                //     add_disposition_array.push(dispo_config);
+                //     const disposition_config = {
+                //             set_dispositions_configurations : add_disposition_array, 
+                //     };
+                // // }
+                // var storeddisposition = $.extend( stored, disposition_config );
+                // window.localStorage.setItem('campaign_data',JSON.stringify(storeddisposition));
+
+                tablerows += '<tr>';
+                tablerows += '<td id=\"despoName\">'+$(this).val() +'</td>';
+                tablerows += '<td>'+short_code +'</td>';
+                tablerows += '<td>'+ type +'</td>';
+                tablerows += '<td>'+ 'Automatic' +'</td>';
+                tablerows += '<td>'+ max_retry_count +'</td>';
+                tablerows += '<td>'+ retry_delay +'</td>';
+                // tablerows += '<td><a href=\"#\" title=\"Update\" aria-label=\"Update\" data-pjax=\"0\" id=\"'+disposition_id+'\" onClick=\"'+updateDispo(disposition_id)+'\"><svg aria-hidden=\"true\" style=\"display:inline-block;font-size:inherit;height:1em;overflow:visible;vertical-align:-.125em;width:1em\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 512 512\"><path fill=\"currentColor\" d=\"M498 142l-46 46c-5 5-13 5-17 0L324 77c-5-5-5-12 0-17l46-46c19-19 49-19 68 0l60 60c19 19 19 49 0 68zm-214-42L22 362 0 484c-3 16 12 30 28 28l122-22 262-262c5-5 5-13 0-17L301 100c-4-5-12-5-17 0zM124 340c-5-6-5-14 0-20l154-154c6-5 14-5 20 0s5 14 0 20L144 340c-6 5-14 5-20 0zm-36 84h48v36l-64 12-32-31 12-65h36v48z\"></path></svg></a><a href=\"#\" class=\"text-danger\"><span class=\"fa fa-trash\"></span></a></td>';
+                tablerows += '<td><a href=\"#\" class=\"text-primary updisposition\" data-id=\"'+disposition_id+'\" id=\"updisposition'+disposition_id+'\"><span class=\"fa fa-pen\"></span></a> | <a href=\"#\" class=\"text-danger\"><span class=\"fa fa-trash\"></span></a></td>';
+                tablerows += '</tr>';
+            })
+            $('#displosotion_data').html(tablerows); 
+
+            $('.updisposition').on('click', function() {
+                var dispo_id = $(this).data("id");
+                var dispo_name = $(this).closest('td').prev('td').prev('td').prev('td').prev('td').prev('td').prev('td').html();
+                var dispo_short_code = $(this).closest('td').prev('td').prev('td').prev('td').prev('td').prev('td').html();
+                var dispo_type = $(this).closest('td').prev('td').prev('td').prev('td').prev('td').html();
+                var dispo_result = $(this).closest('td').prev('td').prev('td').prev('td').html();
+                var dispo_retry_count = $(this).closest('td').prev('td').prev('td').html();
+                var dispo_retry_delay = $(this).closest('td').prev('td').html();
+               
+                var modal;
+                modal += '<div class=\"col-lg-12 disposition-row\">';
+                modal += '<hr class=\"row-break hidden\">';
+                modal += '<div class=\"row justify-content-center align-items-center form-box\">';
+                modal += '<div class=\"col-lg-3\">';
+                modal += '<input type=\"hidden\" id=\"vaanicampdispositions-disposition_id\" name=\"VaaniCampDispositions[disposition_id][]\" value=\"'+dispo_id+'\" class=\"dispo_idss\">';
+                modal += '<input type=\"hidden\" id=\"vaanicampdispositions-type\" name=\"VaaniCampDispositions[type][]\" value=\"'+dispo_type+'\" class=\"\">';
+                modal += '<div class=\"form-group field-vaanidispositions-disposition_name\">';
+                modal += '<input type=\"text\" id=\"vaanidispositions-disposition_name\" class=\"form-control\" name=\"VaaniDispositions[disposition_name][]\" value=\"'+dispo_name+'\" readonly placeholder=\"Disposition Name\">';
+                modal += '<label class=\"form-label\" for=\"vaanidispositions-disposition_name\">Disposition Name</label>';
+                modal += '<div class=\"help-block\"></div>';
+                modal += '</div>';
+                
+                modal += '</div>';
+                modal += '<div class=\"col-lg-3\">';
+                modal += '<div class=\"form-group field-vaanidispositions-short_code\">';
+                modal += '<input type=\"text\" id=\"vaanidispositions-short_code\" class=\"form-control\" name=\"VaaniDispositions[short_code][]\" value=\"'+dispo_short_code+'\" readonly placeholder=\"Short Code\">';
+                modal += '<label class=\"form-label\" for=\"vaanidispositions-short_code\">Short Code\</label>';
+                modal += '<div class=\"help-block\"></div>';
+                modal += '</div>';
+                modal += '</div>';
+                modal += '<div class=\"col-lg-3\">';
+                modal += '<div class=\"form-group field-vaanidispositions-max_retry_count\">';
+                modal += '<input type=\"text\" id=\"vaanidispositions-max_retry_count\" class=\"form-control\" name=\"VaaniDispositions[max_retry_count][]\" value=\"'+dispo_retry_count+'\"  placeholder=\"Max Retry Count\">';
+                modal += '<label class=\"form-label\" for=\"vaanidispositions-max_retry_count\">Max Retry Count</label>';
+                modal += '<div class=\"help-block\"></div>';
+                modal += '</div>';
+                modal += '</div>';
+                modal += '<div class=\"col-lg-3\">';
+                modal += '<div class=\"form-group field-vaanidispositions-retry_delay1\">';
+                modal += '<input type=\"text\" id=\"vaanidispositions-retry_delay1\" class=\"form-control\" name=\"VaaniDispositions[retry_delay][]\" value=\"'+dispo_retry_delay+'\"  placeholder=\"Retry Delay (secs)\">';
+                modal += '<label class=\"form-label\" for=\"vaanidispositions-retry_delay1\">Retry Delay (secs)</label>';
+                modal += '<div class=\"help-block\"></div>';
+                modal += '</div>';
+                modal += '</div>';
+                modal += '</div>';
+                modal += '<div class=\"justify-content-center updatedispositionss\" style=\"text-align: center;\" id=\"updatedispositionss\"><a class=\"btn btn-primary\">save</a></div>';
+
+                // send data to update model of disposotion
+                $('.dispo_update_details').html(modal);
+                //pop up modal for dispostion     
+                $('#dispo_update_modal').modal('show');
+                // $('#dispo_update_modal').change(function(){
+                 
+                    
+                    
+                    $('.updatedispositionss').click(function(){
+                        mrt_cut = $('#vaanidispositions-max_retry_count').val();
+                        rt_de = $('#vaanidispositions-retry_delay1').val();
+                        disp = $('.dispo_idss').val();
+                       
+                         $('#updisposition'+disp).closest('td').prev('td').prev('td').html(mrt_cut);
+                         $('#updisposition'+disp).closest('td').prev('td').html(rt_de);
+                         
+                        // const dispo_config = {
+                        //     disposition_id :dispo_id,
+                        //     disposition_name :dispo_name,
+                        //     short_code :dispo_short_code,
+                        //     disposition_type :dispo_type,
+                        //     dispo_result :dispo_result,
+                        //     max_retry_count: mrt_cut,
+                        //     retry_delay: rt_de,
+                        //  }
+                        // //  update dispostion in local storage 
+                        //  var stored = JSON.parse(localStorage.getItem("campaign_data"));
+                        //  let dispo = stored.set_dispositions_configurations.map(dis => dis.disposition_id);
+                        //  let index = dispo.findIndex(disposition_id => disposition_id == dispo_id); 
+                        //  stored.set_dispositions_configurations[index] = dispo_config;
+                        //  window.localStorage.setItem('campaign_data',JSON.stringify(stored));
+                        // //  reflecting table after update 
+                        // var table = JSON.parse(localStorage.getItem("campaign_data"));
+                        // var tblrw;
+                        // $.each(table.set_dispositions_configurations, function(key, value) {
+                        //         // console.log(value.disposition_id);
+                        //         tblrw += '';
+                        //         tblrw += '<tr>';
+                        //         tblrw += '<td>'+value.disposition_name +'</td>';
+                        //         tblrw += '<td>'+value.short_code +'</td>';
+                        //         tblrw += '<td>'+ value.disposition_type +'</td>';
+                        //         tblrw += '<td>'+ 'Automatic' +'</td>';
+                        //         tblrw += '<td>'+ value.max_retry_count +'</td>';
+                        //         tblrw += '<td>'+ value.retry_delay +'</td>';
+                        //         tblrw += '<td><a href=\"#\" class=\"text-primary updisposition\" data-id=\"'+value.disposition_id+'\"><span class=\"fa fa-pen\"></span></a> | <a href=\"#\" class=\"text-danger\"><span class=\"fa fa-trash\"></span></a></td>';
+                        //         tblrw += '</tr>';
+                        // });
+                        // $('#displosotion_data').html(tblrw);
+                        // console.log(tblrw); 
+                        
+                    });
+                   
+              
+            });
+        });
+    }
+
+    $('.disposition_plan').change(function(){
+        var plan_id = $(this).val();
+        var campaign_id = '<?php echo $campaign_names ?>';
+        fetchDispo(plan_id, campaign_id);
+        // $('#dispo_modal').modal('show');
+    });
+
+
+
+$( document ).ready(function() {
+    // console.log( "ready!" );
+    displayunassinedUser();
+    displayAssinedUser();
+    $('#outbound_criteria').hide();
+    $('.add-skill-form').hide();
+    $('#TimePreview').hide();
+    $(".pacing_ratio").hide();
+    $(".abandoned_percent").hide();
+    $(".basket_count").hide();
+});
+
+</script>
