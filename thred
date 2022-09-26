@@ -1,0 +1,47 @@
+#function to write file
+# function is ready 
+import threading 
+import os
+def task():
+    
+    fh_r = open("demo1.txt", "r")
+    fh_w = open("temp.txt", "w")
+    index = input("Enter the index no to Search:")
+    Name="Name = "+input("Enter a Name")
+    Emp_id="Emp_id = "+input("Enter a Emp_id")
+    Role="Role = "+input("Enter a Role")
+    contact="contact = "+input("Enter a contact")
+    announce = "announce-frequency=10"
+    minannounce = "min-announce-frequency=10"
+    announceposition = "announce-position-limit=10"
+    announceholdtime = "announce-holdtime=5"
+    setinterfacevar= "setinterfacevar=yes"
+    setqueueentryvar ="setqueueentryvar=yes"
+    monitor = "monitor-format = wav49"
+    exitss = "#edassalesnew_17"
+    s =' '
+    while(s):
+        s=fh_r.readline()
+        if len(s)>0:
+            if s[0:-1]==index:
+                i_d = index
+                fh_w.write(i_d+"\n"+Name+"\n"+Emp_id+"\n"+Role+"\n"+contact+"\n"+announce+"\n"+minannounce+"\n"+announceposition+"\n"+announceholdtime+"\n"+setinterfacevar+"\n"+setqueueentryvar+"\n"+monitor+"\n"+exitss+"\n")
+                for line in fh_r:
+                    if '#' in line:
+                        break  
+            else:  
+                   fh_w.write(s)
+    
+
+    fh_r.close()
+    fh_w.close()
+    os.remove("demo1.txt")
+    os.rename("temp.txt","demo1.txt")
+
+def main():
+    start_time = threading.Thread(target=task)
+    start_time.setDaemon = True
+    start_time.start()
+
+if __name__ == '__main__':
+   main()
